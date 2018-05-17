@@ -28,15 +28,17 @@ def read_params(model_name):
     for item_data_dict in data:
         elems.append(list(item_data_dict.get(k,None) for k in all_columns))
     df=pd.DataFrame.from_records(elems,columns=all_columns)
-    
-    df["log_sc_val_loss"]=np.log(df["sc_val_loss"])
+
+    score_cols=[col for col in all_columns if col.startswith("sc_")]
+    for scol in score_cols:
+        df["log_"+scol]=np.log(df[scol]) #make log ranges
     return df
 
 @app.route('/')
 def root():
     global df,args
     df=read_params(args.prefix)
-    df=df.filter(regex="param_.*|sc_val_loss|sc_log_val_loss")
+    df=df.filter(regex="param_.*|sc_({0})|log_sc_({0})".format("|".join(args.scores.split(","))))
     return render_template('index.html',datatable=df.to_html(),model_prefix=args.prefix)
 
 @app.route('/data.tsv')
@@ -52,6 +54,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument("--prefix",help="Model file prefix to gather the .history.json files")
     parser.add_argument("--port",default=5957,type=int,help="Port %(default)d")
+    parser.add_argument("--scores",default="val_loss",help="Scores to include, comma-separated like 'loss,val_loss'. Their log versions will be included as well.  Default: %(default)s")
     args = parser.parse_args()
 
     df=None
