@@ -21,7 +21,17 @@ def read_params(model_name):
             val=float(val)
             item_data_dict["param_"+pname]=val
         for score,vals in score_dicts.items():
-            item_data_dict["sc_"+score]=vals[-1]
+            if args.epoch=="last":
+                item_data_dict["sc_"+score]=vals[-1]
+            elif args.epoch=="min":
+                item_data_dict["sc_"+score]=min(vals)
+            elif args.epoch=="max":
+                item_data_dict["sc_"+score]=max(vals)
+            elif args.epoch=="auto":
+                if "acc" in score:
+                    item_data_dict["sc_"+score]=max(vals)
+                else:
+                    item_data_dict["sc_"+score]=min(vals)
         data.append(item_data_dict)
     all_columns=list(sorted(set(k for item_data_dict in data for k in item_data_dict)))
     elems=[]
@@ -55,6 +65,7 @@ if __name__ == '__main__':
     parser.add_argument("--prefix",help="Model file prefix to gather the .history.json files")
     parser.add_argument("--port",default=5957,type=int,help="Port %(default)d")
     parser.add_argument("--scores",default="val_loss",help="Scores to include, comma-separated like 'loss,val_loss'. Their log versions will be included as well.  Default: %(default)s")
+    parser.add_argument("--epoch",default="auto",help="Which value to choose among epochs? Choice of 'min,max,last,auto' where 'auto' is max for acc and min for everything else. Default: %(default)s")
     args = parser.parse_args()
 
     df=None
