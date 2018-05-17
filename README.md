@@ -10,7 +10,7 @@ A little script to help in parameter selection. Parameters and their correspondi
 Dump as json the training history you get from `model.fit()` and encode the parameters in the name like so:
 
     parameters={"lrate":0.01,"dropout":0.15,"embedding_width":200} #have a dictionary with your parameters
-    param_string="__".join("{}_{}".format(k,v) for k,v in kwargs.items())
+    param_string="__".join("{}_{}".format(k,v) for k,v in parameters.items())
     #gives you "lrate_0.01__dropout_0.15__embedding_width_200" ... always two underscores between parameters
     (...)
     hist=model.fit(...) #...fit your model and get history
