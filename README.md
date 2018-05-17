@@ -29,3 +29,10 @@ This will look for all files called `logdir/my_model__*.history.json` and serve 
     ssh -L 5957:localhost:5957 serveraddress
     
 and point your browser to `http://localhost:5957`
+
+# Scores
+
+All scores found in the hist file are available, together with their log versions. Default is to use `val_loss`, but you can specify your own:
+
+    python3 param_vis.py --prefix "logdir/my_model" --scores val_loss,loss
+    
