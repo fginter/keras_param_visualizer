@@ -36,4 +36,7 @@ All scores found in the hist file are available, together with their log version
 
     python3 param_vis.py --prefix "logdir/my_model" --scores val_loss,loss
     
+## Epoch choice
+
+Since the history file contains scores over all epochs, we need to decide which epoch to choose. Use `--epoch (last|min|max|auto)` where `auto` picks `max` for scores with "acc" as a substring and `min` for everything else. This corresponds to Keras `auto`.
 
